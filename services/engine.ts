@@ -42,9 +42,9 @@ const calculateDimensionResult = (data: AssessmentData, userScores: Scores): Res
   // Find the rule that matches the generated code
   return data.resultRules.find(r => r.resultId === resultId) || {
     resultId: 'UNKNOWN',
-    title: 'Unknown Personality',
-    summary: 'Your combination resulted in a unique type not in our database.',
-    details: `Generated Code: ${resultId}`
+    title: '未知类型',
+    summary: '您的选择组合非常独特，暂未匹配到对应的标准类型。',
+    details: `生成代码: ${resultId}`
   };
 };
 
@@ -65,7 +65,7 @@ const calculateScoreResult = (data: AssessmentData, userScores: Scores): ResultR
     return totalScore >= min && totalScore <= max;
   }) || {
     resultId: 'DEFAULT',
-    title: 'Assessment Complete',
-    summary: `Your total score was ${totalScore}`,
+    title: '测评完成',
+    summary: `您的总分为 ${totalScore}`,
   };
 };
