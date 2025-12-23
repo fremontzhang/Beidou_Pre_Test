@@ -3,31 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>北斗短剧潜力测评</title>
-    <meta name="description" content="专业配置化测评系统，支持 MBTI 维度分析与积分模式，采用高端移动优先 UI。">
+    <title>短剧潜力测评</title>
+    <meta name="description" content="AI赋能职业分析，发掘你的短剧行业潜能，定制居家创收方案。">
     <!-- Fix Favicon 404 -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌌</text></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <style>
       body {
         font-family: 'Inter', sans-serif;
-        /* Prevent bounce scroll on mobile */
         overscroll-behavior-y: none; 
       }
       .glass-panel {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(30, 41, 59, 0.7);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
       }
       .fade-in {
-        animation: fadeIn 0.5s ease-out forwards;
+        animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
       }
       @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
+        from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
+      }
+      /* Animated gradient background */
+      .bg-animate {
+        background: linear-gradient(-45deg, #0f172a, #1e1b4b, #312e81, #0f172a);
+        background-size: 400% 400%;
+        animation: gradient 15s ease infinite;
+      }
+      @keyframes gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
       }
     </style>
   <script type="importmap">
@@ -41,9 +52,8 @@
 }
 </script>
 </head>
-  <body class="bg-slate-900 text-white antialiased selection:bg-purple-500 selection:text-white">
+  <body class="bg-slate-950 text-white antialiased selection:bg-purple-500 selection:text-white">
     <div id="root"></div>
-    <!-- Explicitly load the entry point -->
     <script type="module" src="./index.tsx"></script>
   </body>
 </html>

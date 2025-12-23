@@ -2,7 +2,7 @@ import { AssessmentData, Option, Question } from './types';
 
 /**
  * HOLLAND ASSESSMENT (90 Questions)
- * R: 1-15, I: 16-30, A: 31-45, S: 46-60, E: 61-75, C: 76-90
+ * Standard questions are retained as the engine, but the context is rebranded.
  */
 
 // Helper to generate Yes/No options for a specific category
@@ -125,34 +125,31 @@ const createQuestions = (): Question[] => {
 
 export const MOCK_ASSESSMENT_DATA: AssessmentData = {
   testConfig: {
-    testId: "holland_90",
-    title: "霍兰德职业兴趣测评",
-    description: "还在纠结什么职业适合你？做下霍兰德测评吧！看自己喜欢的、又能赚到钱的工作是什么。",
-    coverImage: "https://picsum.photos/seed/career/800/600",
+    testId: "short_drama_assessment",
+    title: "短剧潜力测评",
+    description: "测测你是否具备成为“短剧大神”的潜质？AI 深度分析你的职业基因。",
+    coverImage: "",
     mode: "category", 
     totalQuestions: 90
   },
   
   // Dimensions for Chart Labeling
   dimensions: [
-    { code: "R", name: "实用型 (R)" },
-    { code: "I", name: "研究型 (I)" },
-    { code: "A", name: "艺术型 (A)" },
-    { code: "S", name: "社会型 (S)" },
-    { code: "E", name: "企业型 (E)" },
-    { code: "C", name: "事务型 (C)" }
+    { code: "R", name: "R-实干型" },
+    { code: "I", name: "I-研究型" },
+    { code: "A", name: "A-艺术型" },
+    { code: "S", name: "S-社会型" },
+    { code: "E", name: "E-企业型" },
+    { code: "C", name: "C-事务型" }
   ],
 
   questions: createQuestions(),
 
-  // Generic result rule (Analysis Logic handled in App.tsx)
   resultRules: [
     {
       resultId: "COMPLETED",
       title: "测评已完成",
-      summary: "你的职业兴趣密码已生成！",
-      details: "查看下方结果",
-      imageUrl: "https://picsum.photos/seed/result/800/600"
+      summary: "结果生成中",
     }
   ]
 };
