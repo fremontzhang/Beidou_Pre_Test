@@ -1,154 +1,158 @@
-import { AssessmentData } from './types';
+import { AssessmentData, Option, Question } from './types';
 
 /**
- * MANAGING THIS FILE:
- * To change questions, simply edit the 'questions' array.
- * To change scoring logic, toggle 'mode' between 'dimension' and 'score'.
- * To add results, add entries to 'resultRules'.
+ * HOLLAND ASSESSMENT (90 Questions)
+ * R: 1-15, I: 16-30, A: 31-45, S: 46-60, E: 61-75, C: 76-90
  */
+
+// Helper to generate Yes/No options for a specific category
+const yesNo = (category: string): Option[] => [
+  { content: "是", value: category, score: 1 },
+  { content: "否", value: category, score: 0 }
+];
+
+const createQuestions = (): Question[] => {
+  const qData = [
+    // --- R: 实用型 (1-15) ---
+    { t: "强壮而敏捷的身体对我很重要", c: "R" },
+    { t: "我擅长于自己制作、修理东西", c: "R" },
+    { t: "我喜欢使用双手做事", c: "R" },
+    { t: "我不在乎工作把手弄脏", c: "R" },
+    { t: "我喜欢购买小零件，做成成品", c: "R" },
+    { t: "我喜欢独立完成一项任务", c: "R" },
+    { t: "我喜欢直言不讳，不喜欢转弯抹角", c: "R" },
+    { t: "从事户外活动令我神清气爽", c: "R" },
+    { t: "我喜欢周边环境简单而实际", c: "R" },
+    { t: "我不害怕过重工作负荷，且知道工作的重点", c: "R" },
+    { t: "我希望粗重的肢体工作不会伤害任何人", c: "R" },
+    { t: "我选车时，最注意的是好的引擎", c: "R" },
+    { t: "我通常知道如何应付紧急事件", c: "R" },
+    { t: "我用运动来保持强壮的身体", c: "R" },
+    { t: "我喜欢把东西拆开，看看能否修理他们", c: "R" },
+
+    // --- I: 研究型 (16-30) ---
+    { t: "我必须彻底地了解事情的真相", c: "I" },
+    { t: "我可以花很长的时间去想通事情的道理", c: "I" },
+    { t: "探索新构思使我满意", c: "I" },
+    { t: "我认为教育是个发展及磨练脑力的终身学习过程", c: "I" },
+    { t: "有时我长时间阅读，玩拼图游戏，冥想生命本质", c: "I" },
+    { t: "我渴望阅读或思考任何可以引发我好奇心的东西", c: "I" },
+    { t: "我在解决问题前，必须把问题进行彻底分析", c: "I" },
+    { t: "我不断地问：为什么？", c: "I" },
+    { t: "我会不断地思索一个问题，直到找出答案为止", c: "I" },
+    { t: "我喜欢能使我思考、给我新观念的书", c: "I" },
+    { t: "我希望能学习所有使我感兴趣的科目", c: "I" },
+    { t: "我喜欢能刺激我思考的话", c: "I" },
+    { t: "阅读新发现的书事件令人兴奋的事情", c: "I" },
+    { t: "我经常对大自然的奥秘感到好奇", c: "I" },
+    { t: "我喜欢研读所有的事实，再有逻辑的做出决定", c: "I" },
+
+    // --- A: 艺术型 (31-45) ---
+    { t: "我的心情受音乐、色彩和美丽事物的影响极大", c: "A" },
+    { t: "我重视美丽的环境", c: "A" },
+    { t: "我是寻求新方法来发挥我的创造力", c: "A" },
+    { t: "我喜欢非正式的穿着，尝试新颜色和款式", c: "A" },
+    { t: "我有很强的想象力", c: "A" },
+    { t: "我喜欢尝试创新的概念", c: "A" },
+    { t: "我喜欢重新布置我的环境，使他们与众不同", c: "A" },
+    { t: "我喜欢自己的工作能够抒发我的情绪和感觉", c: "A" },
+    { t: "大自然的美深深刻触动我的灵魂", c: "A" },
+    { t: "我希望能看到艺术表演、戏剧及好的电影", c: "A" },
+    { t: "我希望能做些与众不同的事", c: "A" },
+    { t: "当我从事创造性的事时，我会忘掉一切旧经验", c: "A" },
+    { t: "我喜欢美丽、不平凡的东西", c: "A" },
+    { t: "尝试不平凡的新事物是件相当有趣的事情", c: "A" },
+    { t: "没有美丽事物的生活，对我而言是不可思议的", c: "A" },
+
+    // --- S: 社会型 (46-60) ---
+    { t: "和他人的关系丰富了我的生命并使它有意义", c: "S" },
+    { t: "我愿意花时间帮别人解决个人危机", c: "S" },
+    { t: "我认为能把自己的焦虑和别人分担是很重要的", c: "S" },
+    { t: "我常能体会到某人想要和他人沟通的需要", c: "S" },
+    { t: "我喜欢帮助别人发挥天赋和才能", c: "S" },
+    { t: "如果我和别人摩擦，我会不断尝试化干戈为玉帛", c: "S" },
+    { t: "我经常借着和别人交谈来解决自己的问题", c: "S" },
+    { t: "我喜欢帮助别人找可以和他人相互关注的办法", c: "S" },
+    { t: "亲密的人际关系对我显要", c: "S" },
+    { t: "我对别人的情绪低潮相当的敏感", c: "S" },
+    { t: "我对别人的困难乐于伸出援手", c: "S" },
+    { t: "我对社会上有许多人需要帮助感到关注", c: "S" },
+    { t: "我经常关心孤独、不友善的人", c: "S" },
+    { t: "当别人像我诉说他的困难时，我是个好听众", c: "S" },
+    { t: "人们经常告诉我们他们的问题", c: "S" },
+
+    // --- E: 企业型 (61-75) ---
+    { t: "我自信会成功", c: "E" },
+    { t: "我喜欢竞争", c: "E" },
+    { t: "成为群体中的关键任务执行者，对我很重要", c: "E" },
+    { t: "我喜欢帮助别人不断改进", c: "E" },
+    { t: "我喜欢监督事情直至完工", c: "E" },
+    { t: "要成功就必须定高目标", c: "E" },
+    { t: "我常想起草一个计划，而由别人完成细节", c: "E" },
+    { t: "能够参与重大决策是件令人兴奋的事情", c: "E" },
+    { t: "升迁和进步对我极重要", c: "E" },
+    { t: "能影响别人使我感到兴奋", c: "E" },
+    { t: "我愿意冒一点险以求进步", c: "E" },
+    { t: "说服别人依计划行事是件有趣的事情", c: "E" },
+    { t: "我喜欢讨价还价", c: "E" },
+    { t: "做事失败了，我会再接再厉", c: "E" },
+    { t: "我常能借着资讯网络和别人取得联系", c: "E" },
+
+    // --- C: 务实型/常规型 (76-90) ---
+    { t: "我做事必须有清楚的指引", c: "C" },
+    { t: "我在开始一个计划前会花很多时间去计划", c: "C" },
+    { t: "我对于自己能重视工作中的所有细节感到骄傲", c: "C" },
+    { t: "我在决策时，通常不愿冒险", c: "C" },
+    { t: "如果我面对一个新情景，会在事前做充分的准备", c: "C" },
+    { t: "我喜欢为重大决策负责", c: "C" },
+    { t: "准时对我来说非常重要", c: "C" },
+    { t: "我经常保持清洁,喜欢有条不紊", c: "C" },
+    { t: "当我把每日工作计划好时，我会较有安全感", c: "C" },
+    { t: "当我答应一件事时，我会竭尽监督所有细节", c: "C" },
+    { t: "当我遵循成规时，我感到安全", c: "C" },
+    { t: "我擅长于检查细节", c: "C" },
+    { t: "我花钱时小心翼翼", c: "C" },
+    { t: "我需要确切地知道别人对我的要求是什么", c: "C" },
+    { t: "小心谨慎的完成一件事是件有成就感的事情", c: "C" },
+  ];
+
+  return qData.map((q, idx) => ({
+    id: idx + 1,
+    text: q.t,
+    options: yesNo(q.c)
+  }));
+};
 
 export const MOCK_ASSESSMENT_DATA: AssessmentData = {
   testConfig: {
-    testId: "short_drama_001",
-    title: "北斗帮你测测推广短剧的潜力",
-    description: "短剧推广是当下的风口，你是否具备打造爆款、月入过万的潜质？花3分钟完成这10道专业测试，AI将为你揭晓答案。",
-    coverImage: "https://picsum.photos/800/600?grayscale",
-    mode: "score", 
-    totalQuestions: 10
+    testId: "holland_90",
+    title: "霍兰德职业兴趣测评",
+    description: "还在纠结什么职业适合你？做下霍兰德测评吧！看自己喜欢的、又能赚到钱的工作是什么。",
+    coverImage: "https://picsum.photos/seed/career/800/600",
+    mode: "category", 
+    totalQuestions: 90
   },
   
-  // Empty for score mode
-  dimensions: [],
-
-  questions: [
-    {
-      id: 1,
-      text: "平时你自己刷短视频或短剧的频率是？",
-      options: [
-        { content: "几乎不看，觉得浪费时间", value: "total", score: 0 },
-        { content: "偶尔看，打发时间", value: "total", score: 5 },
-        { content: "重度用户，经常一看就停不下来", value: "total", score: 10 }
-      ]
-    },
-    {
-      id: 2,
-      text: "看到一个爆款视频，你的第一反应通常是？",
-      options: [
-        { content: "纯粹觉得好笑或好看", value: "total", score: 2 },
-        { content: "思考它为什么会火，bgm还是文案？", value: "total", score: 10 },
-        { content: "赶紧划走，不感兴趣", value: "total", score: 0 }
-      ]
-    },
-    {
-      id: 3,
-      text: "对于视频剪辑软件（如剪映），你的熟练程度是？",
-      options: [
-        { content: "完全不会，没听说过", value: "total", score: 0 },
-        { content: "会基础操作，能剪辑简单视频", value: "total", score: 5 },
-        { content: "非常熟练，懂关键帧、蒙版等高级功能", value: "total", score: 10 }
-      ]
-    },
-    {
-      id: 4,
-      text: "如果让你给一个霸道总裁短剧起标题，你会选？",
-      options: [
-        { content: "霸道总裁爱上我", value: "total", score: 2 },
-        { content: "这个男人太帅了", value: "total", score: 0 },
-        { content: "新婚夜，植物人老公突然站起来了！", value: "total", score: 10 }
-      ]
-    },
-    {
-      id: 5,
-      text: "面对新事物或新平台规则，你的学习习惯是？",
-      options: [
-        { content: "遇到问题再查，懒得钻研", value: "total", score: 2 },
-        { content: "主动搜索教程，愿意花时间研究玩法", value: "total", score: 10 },
-        { content: "等别人教我", value: "total", score: 0 }
-      ]
-    },
-    {
-      id: 6,
-      text: "做推广初期可能流量很差，你会？",
-      options: [
-        { content: "深受打击，觉得我不适合这行", value: "total", score: 0 },
-        { content: "有点焦虑，但会坚持发几天看看", value: "total", score: 5 },
-        { content: "分析数据，优化素材，不断测试直到跑通", value: "total", score: 10 }
-      ]
-    },
-    {
-      id: 7,
-      text: "你对“爽点”和“槽点”的敏感度如何？",
-      options: [
-        { content: "很难get到大家为什么激动", value: "total", score: 0 },
-        { content: "大概知道大众喜欢看什么", value: "total", score: 5 },
-        { content: "秒懂观众high点，知道哪里最吸睛", value: "total", score: 10 }
-      ]
-    },
-    {
-      id: 8,
-      text: "每天能投入在副业或推广上的时间是？",
-      options: [
-        { content: "半小时以内，很忙", value: "total", score: 2 },
-        { content: "1-2小时，比较稳定", value: "total", score: 8 },
-        { content: "3小时以上，时间充裕", value: "total", score: 10 }
-      ]
-    },
-    {
-      id: 9,
-      text: "对于“付费投流”获取更高收益，你的看法是？",
-      options: [
-        { content: "绝对不花钱，只做免费流量", value: "total", score: 2 },
-        { content: "看情况，如果ROI为正可以尝试", value: "total", score: 10 },
-        { content: "风险太大，不敢碰", value: "total", score: 0 }
-      ]
-    },
-    {
-      id: 10,
-      text: "你认为短剧推广的核心竞争力是？",
-      options: [
-        { content: "运气好，碰到爆款", value: "total", score: 2 },
-        { content: "执行力+网感+数据分析能力", value: "total", score: 10 },
-        { content: "账号粉丝多", value: "total", score: 5 }
-      ]
-    }
+  // Dimensions for Chart Labeling
+  dimensions: [
+    { code: "R", name: "实用型 (R)" },
+    { code: "I", name: "研究型 (I)" },
+    { code: "A", name: "艺术型 (A)" },
+    { code: "S", name: "社会型 (S)" },
+    { code: "E", name: "企业型 (E)" },
+    { code: "C", name: "事务型 (C)" }
   ],
 
+  questions: createQuestions(),
+
+  // Generic result rule (Analysis Logic handled in App.tsx)
   resultRules: [
     {
-      minScore: 0,
-      maxScore: 40,
-      resultId: "LEVEL_1",
-      title: "潜力萌新",
-      summary: "你对短剧行业尚处于懵懂阶段，建议先多看多学。",
-      details: "你的网感和技能储备目前还有提升空间。如果想入局，建议先从“养号”和“刷剧”开始，培养对爆款内容的敏感度，不要急于求成。",
-      imageUrl: "https://picsum.photos/seed/level1/600/400"
-    },
-    {
-      minScore: 41,
-      maxScore: 70,
-      resultId: "LEVEL_2",
-      title: "进阶推手",
-      summary: "你具备基本的推广潜质，只需补齐技能短板。",
-      details: "你有不错的网感，对行业也有一定认知。现在的关键是提升剪辑硬技能和文案能力，只要坚持执行，出单只是时间问题。",
-      imageUrl: "https://picsum.photos/seed/level2/600/400"
-    },
-    {
-      minScore: 71,
-      maxScore: 85,
-      resultId: "LEVEL_3",
-      title: "爆款预备役",
-      summary: "你的潜力巨大，离爆款只差一个机会！",
-      details: "你对用户心理和平台规则有很深的理解，这是最宝贵的天赋。保持对数据的敏感度，大胆尝试不同的素材风格，你很有可能成为下一个带货达人。",
-      imageUrl: "https://picsum.photos/seed/level3/600/400"
-    },
-    {
-      minScore: 86,
-      maxScore: 100,
-      resultId: "LEVEL_4",
-      title: "天选操盘手",
-      summary: "简直是为短剧推广而生！大神请受我一拜。",
-      details: "无论是网感、逻辑还是执行力，你都处于顶尖水平。你不仅能自己跑通闭环，甚至有能力带领团队。建议尝试矩阵化运营或付费投流，放大收益。",
-      imageUrl: "https://picsum.photos/seed/level4/600/400"
+      resultId: "COMPLETED",
+      title: "测评已完成",
+      summary: "你的职业兴趣密码已生成！",
+      details: "查看下方结果",
+      imageUrl: "https://picsum.photos/seed/result/800/600"
     }
   ]
 };

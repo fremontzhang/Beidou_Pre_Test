@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState } from 'react';
 import { MOCK_ASSESSMENT_DATA } from './constants';
 import { Scores, ResultRule } from './types';
 import { calculateResult } from './services/engine';
 import { ProgressBar } from './components/ProgressBar';
-import { OptionCard } from './components/OptionCard';
-import { ChevronRight, RefreshCw, Share2, Sparkles } from 'lucide-react';
+import { ChevronRight, RefreshCw, Check, X, Sparkles } from 'lucide-react';
 
 enum AppState {
   START,
@@ -19,11 +18,9 @@ const App: React.FC = () => {
   const [scores, setScores] = useState<Scores>({});
   const [result, setResult] = useState<ResultRule | null>(null);
 
-  // Use the config from constants
   const data = MOCK_ASSESSMENT_DATA;
   const currentQuestion = data.questions[currentQuestionIndex];
 
-  // Start the quiz
   const handleStart = () => {
     setAppState(AppState.QUIZ);
     setCurrentQuestionIndex(0);
@@ -31,25 +28,14 @@ const App: React.FC = () => {
     setResult(null);
   };
 
-  // Handle Option Click
   const handleOptionClick = (optionValue: string, optionScore: number) => {
-    // 1. Update Scores based on logic
     const newScores = { ...scores };
-    
-    // For 'dimension' mode: accumulate keys like 'E' or 'I'
-    // For 'score' mode: we can accumulate a 'total' key or just specific category keys
-    if (data.testConfig.mode === 'dimension') {
-      newScores[optionValue] = (newScores[optionValue] || 0) + optionScore;
-    } else {
-      // Score mode - generic accumulation
-      newScores['total'] = (newScores['total'] || 0) + optionScore;
-    }
+    // For Holland (category mode), accumulate score for R, I, A, etc.
+    newScores[optionValue] = (newScores[optionValue] || 0) + optionScore;
     
     setScores(newScores);
 
-    // 2. Navigate
     if (currentQuestionIndex < data.questions.length - 1) {
-      // Delay slightly for visual feedback if needed, but requirements say "automatic next question"
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
       finishQuiz(newScores);
@@ -58,8 +44,6 @@ const App: React.FC = () => {
 
   const finishQuiz = (finalScores: Scores) => {
     setAppState(AppState.CALCULATING);
-    
-    // Simulate calculation delay for dramatic effect
     setTimeout(() => {
       const calculatedResult = calculateResult(data, finalScores);
       setResult(calculatedResult);
@@ -70,72 +54,75 @@ const App: React.FC = () => {
   // --- RENDERERS ---
 
   const renderStartScreen = () => (
-    <div className="flex flex-col items-center justify-center min-h-screen px-6 py-12 text-center fade-in">
-      <div className="relative mb-8 w-full max-w-sm aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-        <img 
-          src={data.testConfig.coverImage} 
-          alt="Cover" 
-          className="object-cover w-full h-full opacity-80 hover:scale-105 transition-transform duration-700" 
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent"></div>
-        <div className="absolute bottom-4 left-4 text-left">
-            <span className="inline-block px-3 py-1 mb-2 text-xs font-bold tracking-wider text-white uppercase bg-pink-600 rounded-full">
-                专业测评
-            </span>
-        </div>
+    <div className="flex flex-col items-center justify-center min-h-screen px-6 py-12 text-center fade-in bg-slate-900">
+      <div className="mb-2">
+        <span className="inline-block px-3 py-1 text-xs font-bold tracking-wider text-green-300 bg-green-900/50 border border-green-700/50 rounded-full uppercase">
+            职业规划必备
+        </span>
       </div>
-
-      <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-300 to-pink-300 mb-4">
+      
+      <h1 className="text-3xl font-bold text-white mb-6 leading-tight">
         {data.testConfig.title}
+        <span className="block text-lg font-normal text-slate-400 mt-2">完整版 (90题)</span>
       </h1>
       
-      <p className="text-lg text-slate-300 mb-8 max-w-md leading-relaxed">
-        {data.testConfig.description}
-      </p>
-
-      <div className="flex items-center gap-2 text-sm text-slate-400 mb-10">
-        <span className="px-2 py-1 bg-white/5 rounded border border-white/10">{data.testConfig.totalQuestions} 道题目</span>
-        <span className="px-2 py-1 bg-white/5 rounded border border-white/10">约 3 分钟</span>
+      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-8 text-left space-y-4">
+        <p className="text-slate-200">💫 还在纠结自己是不是因为工作而内耗吗？</p>
+        <p className="text-slate-200">🔮 试试用“霍兰德职业兴趣测评”，看自己喜欢的、又能赚到钱的工作是什么吧！</p>
+        <p className="text-xs text-slate-500 pt-2 border-t border-white/10">
+          🌈 愿你我：在这焦虑的时代，过不焦虑的人生！
+        </p>
       </div>
 
       <button 
         onClick={handleStart}
-        className="group relative px-8 py-4 bg-white text-slate-900 font-bold rounded-full shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] transition-all active:scale-95 flex items-center gap-2"
+        className="w-full max-w-xs px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold rounded-full shadow-lg shadow-green-900/50 hover:scale-105 transition-all flex items-center justify-center gap-2"
       >
-        开始测评
-        <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+        开始探索
+        <ChevronRight className="w-5 h-5" />
       </button>
+      
+      <p className="mt-6 text-xs text-slate-500">
+        共 {data.testConfig.totalQuestions} 题 · 预计 5-8 分钟
+      </p>
     </div>
   );
 
   const renderQuizScreen = () => (
-    <div className="flex flex-col min-h-screen max-w-lg mx-auto px-5 py-8 fade-in">
-      {/* Header / Progress */}
-      <div className="mb-8">
-        <div className="flex justify-between text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wide">
-          <span>第 {currentQuestionIndex + 1} 题</span>
-          <span>共 {data.questions.length} 题</span>
+    <div className="flex flex-col min-h-screen max-w-lg mx-auto px-6 py-10 fade-in">
+      <div className="mb-12">
+        <div className="flex justify-between items-end mb-3">
+            <span className="text-4xl font-bold text-slate-100">{currentQuestionIndex + 1}</span>
+            <span className="text-sm font-medium text-slate-500 pb-1">/ {data.questions.length}</span>
         </div>
         <ProgressBar current={currentQuestionIndex + 1} total={data.questions.length} />
       </div>
 
-      {/* Question */}
-      <div className="flex-grow flex flex-col justify-center">
-        <h2 className="text-2xl font-semibold text-white mb-8 leading-snug">
+      <div className="flex-grow flex flex-col justify-center mb-12">
+        <h2 className="text-2xl font-medium text-slate-100 leading-relaxed text-center">
           {currentQuestion.text}
         </h2>
+      </div>
 
-        {/* Options */}
-        <div className="space-y-4">
-          {currentQuestion.options.map((option, idx) => (
-            <OptionCard 
-              key={idx}
-              index={idx}
-              option={option}
-              onClick={() => handleOptionClick(option.value, option.score)}
-            />
-          ))}
-        </div>
+      {/* Simplified Yes/No Buttons for speed since there are 90 questions */}
+      <div className="grid grid-cols-2 gap-4 mt-auto">
+         {currentQuestion.options.map((option, idx) => {
+             const isYes = option.score === 1;
+             return (
+                <button
+                    key={idx}
+                    onClick={() => handleOptionClick(option.value, option.score)}
+                    className={`py-6 rounded-2xl font-bold text-xl transition-all active:scale-95 flex flex-col items-center justify-center gap-2
+                        ${isYes 
+                            ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/40 hover:bg-emerald-500' 
+                            : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                        }`}
+                >
+                    {isYes ? <Check className="w-8 h-8" /> : <X className="w-8 h-8" />}
+                    {option.content}
+                </button>
+             )
+         })}
       </div>
     </div>
   );
@@ -144,86 +131,106 @@ const App: React.FC = () => {
     <div className="flex flex-col items-center justify-center min-h-screen px-6 fade-in">
       <div className="relative w-24 h-24 mb-6">
         <div className="absolute inset-0 border-4 border-slate-700 rounded-full"></div>
-        <div className="absolute inset-0 border-t-4 border-pink-500 rounded-full animate-spin"></div>
-        <Sparkles className="absolute inset-0 m-auto w-8 h-8 text-purple-400 animate-pulse" />
+        <div className="absolute inset-0 border-t-4 border-emerald-500 rounded-full animate-spin"></div>
+        <Sparkles className="absolute inset-0 m-auto w-8 h-8 text-emerald-400 animate-pulse" />
       </div>
-      <h2 className="text-2xl font-bold text-white mb-2">正在分析数据...</h2>
-      <p className="text-slate-400">正在生成您的专属报告</p>
+      <h2 className="text-2xl font-bold text-white mb-2">正在分析六维数据...</h2>
+      <p className="text-slate-400">正在匹配职业兴趣模型</p>
     </div>
   );
 
   const renderResultScreen = () => {
     if (!result) return null;
 
+    // Calculate Top 3 Ranking
+    const sortedCategories = Object.entries(scores)
+        .sort(([, scoreA], [, scoreB]) => (scoreB as number) - (scoreA as number));
+    
+    const top3 = sortedCategories.slice(0, 3);
+    const resultString = top3.map(([code]) => code).join('');
+
     return (
-      <div className="flex flex-col min-h-screen fade-in">
-        {/* Hero Section of Result */}
-        <div className="relative bg-gradient-to-b from-purple-900/50 to-slate-900 pb-12 pt-16 px-6 text-center rounded-b-[3rem] shadow-2xl border-b border-white/10">
-            {result.imageUrl && (
-                <div className="w-32 h-32 mx-auto mb-6 rounded-full p-1 bg-gradient-to-tr from-pink-500 to-purple-600 shadow-xl">
-                    <img src={result.imageUrl} alt={result.title} className="w-full h-full rounded-full object-cover border-4 border-slate-900" />
-                </div>
-            )}
-            <div className="mb-2">
-                 <span className="text-sm font-bold tracking-[0.2em] text-pink-400 uppercase">{result.resultId}</span>
-            </div>
-            <h1 className="text-3xl font-bold text-white mb-4">{result.title}</h1>
-            <p className="text-lg text-purple-200 font-light leading-relaxed max-w-md mx-auto">
-                {result.summary}
+      <div className="flex flex-col min-h-screen fade-in bg-slate-900 pb-12">
+        {/* Header */}
+        <div className="pt-12 pb-8 px-6 text-center bg-gradient-to-b from-emerald-900/40 to-slate-900">
+            <h2 className="text-slate-400 text-sm font-bold uppercase tracking-widest mb-2">您的霍兰德代码</h2>
+            <h1 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 tracking-tighter mb-6">
+                {resultString}
+            </h1>
+            <p className="text-slate-300 text-sm px-8">
+                结果已生成！根据得分高低排序，前三项代表您的核心职业兴趣倾向。
             </p>
         </div>
 
-        {/* Detail Content */}
-        <div className="px-6 py-10 max-w-lg mx-auto w-full">
-            <div className="glass-panel p-6 rounded-2xl mb-6">
-                <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-yellow-400" />
-                    深度分析
-                </h3>
-                <p className="text-slate-300 leading-relaxed text-justify">
-                    {result.details}
-                </p>
-            </div>
+        {/* Chart / Scores */}
+        <div className="px-6 mb-8">
+            <div className="bg-slate-800/50 rounded-2xl p-6 border border-white/5">
+                <h3 className="text-xs font-bold text-slate-500 uppercase mb-4">得分详情</h3>
+                <div className="space-y-3">
+                    {data.dimensions?.map(dim => {
+                        const score = scores[dim.code] || 0;
+                        const maxScore = 15;
+                        const pct = (score / maxScore) * 100;
+                        const isTop3 = top3.some(t => t[0] === dim.code);
 
-            {/* Dimension Breakdown - Only show if dimensions exist and have length */}
-            {data.dimensions && data.dimensions.length > 0 && (
-                 <div className="glass-panel p-6 rounded-2xl mb-8">
-                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">维度分析</h3>
-                    <div className="space-y-4">
-                        {data.dimensions.map(dim => {
-                            const left = scores[dim.left] || 0;
-                            const right = scores[dim.right] || 0;
-                            const total = left + right || 1; 
-                            const leftPct = (left / total) * 100;
-                            
-                            return (
-                                <div key={dim.code} className="flex items-center gap-3 text-xs font-bold text-slate-300">
-                                    <span className="w-4 text-center">{dim.left}</span>
-                                    <div className="flex-1 h-2 bg-slate-700 rounded-full overflow-hidden flex">
-                                        <div style={{ width: `${leftPct}%`}} className="bg-pink-500 h-full"></div>
-                                        <div className="flex-1 bg-indigo-500 h-full"></div>
-                                    </div>
-                                    <span className="w-4 text-center">{dim.right}</span>
+                        return (
+                            <div key={dim.code} className="flex items-center gap-3">
+                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${isTop3 ? 'bg-emerald-500 text-white' : 'bg-slate-700 text-slate-400'}`}>
+                                    {dim.code}
                                 </div>
-                            )
-                        })}
-                    </div>
-                 </div>
-            )}
+                                <div className="flex-1">
+                                    <div className="flex justify-between text-xs mb-1">
+                                        <span className={isTop3 ? 'text-white' : 'text-slate-400'}>{dim.name}</span>
+                                        <span className="text-slate-500">{score}分</span>
+                                    </div>
+                                    <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                        <div 
+                                            className={`h-full rounded-full ${isTop3 ? 'bg-emerald-500' : 'bg-slate-600'}`} 
+                                            style={{ width: `${pct}%`}} 
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            </div>
+        </div>
 
-            {/* Actions */}
-            <div className="grid grid-cols-2 gap-4">
-                <button 
-                    onClick={handleStart}
-                    className="flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold transition-colors border border-white/10"
-                >
-                    <RefreshCw className="w-4 h-4" />
-                    重新测试
-                </button>
-                <button className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-semibold transition-all shadow-lg shadow-purple-900/50">
-                    <Share2 className="w-4 h-4" />
-                    分享结果
-                </button>
+        {/* Funnel / Call to Action */}
+        <div className="px-6">
+            <div className="glass-panel p-8 rounded-3xl text-center border-emerald-500/30 bg-gradient-to-b from-slate-800 to-slate-900 shadow-2xl">
+                <h3 className="text-xl font-bold text-white mb-4">
+                    想要获取详细解读？
+                </h3>
+                
+                <div className="bg-white p-4 rounded-xl inline-block mb-4">
+                    {/* Placeholder QR Code - In production replace with real image */}
+                    <img 
+                        src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://xiaohongshu.com" 
+                        alt="Contact QR" 
+                        className="w-32 h-32"
+                    />
+                </div>
+                
+                <div className="text-left text-sm text-slate-300 space-y-3 bg-slate-800/50 p-4 rounded-xl">
+                    <p className="flex items-start gap-2">
+                        💡 <span className="flex-1">因为最终排列组合多达120种（6个字母任取3个排序），无法在此全部展示。</span>
+                    </p>
+                    <p className="flex items-start gap-2">
+                        🎁 <span className="flex-1 text-emerald-400 font-bold">评论区回复你的结果（如：RIA）</span>，即可获得您的专属职业报告详细解读！
+                    </p>
+                </div>
+
+                <div className="mt-6 pt-6 border-t border-white/10">
+                    <button 
+                        onClick={handleStart}
+                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-semibold transition-colors"
+                    >
+                        <RefreshCw className="w-4 h-4" />
+                        再测一次
+                    </button>
+                </div>
             </div>
         </div>
       </div>
@@ -231,14 +238,12 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950 text-slate-200">
-        <div className="max-w-2xl mx-auto min-h-screen bg-black/10 shadow-2xl relative">
-            {/* Background texture or noise could go here */}
-            {appState === AppState.START && renderStartScreen()}
-            {appState === AppState.QUIZ && renderQuizScreen()}
-            {appState === AppState.CALCULATING && renderCalculatingScreen()}
-            {appState === AppState.RESULT && renderResultScreen()}
-        </div>
+    <div className="min-h-screen bg-slate-900 text-slate-200 font-sans selection:bg-emerald-500 selection:text-white">
+       {/* Removed max-w wrapper to feel more like a native app on mobile, handled by inner containers */}
+       {appState === AppState.START && renderStartScreen()}
+       {appState === AppState.QUIZ && renderQuizScreen()}
+       {appState === AppState.CALCULATING && renderCalculatingScreen()}
+       {appState === AppState.RESULT && renderResultScreen()}
     </div>
   );
 };

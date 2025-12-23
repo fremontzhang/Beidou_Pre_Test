@@ -12,16 +12,16 @@ export interface TestConfig {
 }
 
 export interface Dimension {
-  code: string; // e.g., "EI"
-  name: string; // e.g., "Extrovert vs Introvert"
-  left: string; // e.g., "E"
-  right: string; // e.g., "I"
+  code: string; // e.g., "R", "I"
+  name: string; // e.g., "实用型 (R)"
+  left?: string; // Not used in category mode
+  right?: string; // Not used in category mode
 }
 
 export interface Option {
   content: string;
-  value: string; // The dimension key (e.g., 'E') or simply a value
-  score: number; // The weight
+  value: string; // The dimension key (e.g., 'R')
+  score: number; // 1 for Yes, 0 for No
 }
 
 export interface Question {
@@ -31,9 +31,9 @@ export interface Question {
 }
 
 export interface ResultRule {
-  resultId: string; // e.g., "INTJ" or "score_high"
-  minScore?: number; // Only for 'score' mode
-  maxScore?: number; // Only for 'score' mode
+  resultId: string; 
+  minScore?: number; 
+  maxScore?: number; 
   title: string;
   summary: string;
   details?: string;
@@ -48,4 +48,4 @@ export interface AssessmentData {
 }
 
 // Internal State Types
-export type Scores = Record<string, number>; // { "E": 5, "I": 2 }
+export type Scores = Record<string, number>; // { "R": 10, "I": 5, "A": 12 ... }
