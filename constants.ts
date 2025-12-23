@@ -2,7 +2,6 @@ import { AssessmentData, Option, Question } from './types';
 
 /**
  * HOLLAND ASSESSMENT (90 Questions)
- * Standard questions are retained as the engine, but the context is rebranded.
  */
 
 // Helper to generate Yes/No options for a specific category
@@ -125,9 +124,9 @@ const createQuestions = (): Question[] => {
 
 export const MOCK_ASSESSMENT_DATA: AssessmentData = {
   testConfig: {
-    testId: "short_drama_assessment",
-    title: "短剧潜力测评",
-    description: "测测你是否具备成为“短剧大神”的潜质？AI 深度分析你的职业基因。",
+    testId: "holland_assessment",
+    title: "霍兰德职业兴趣测评",
+    description: "测测你适合做什么工作？",
     coverImage: "",
     mode: "category", 
     totalQuestions: 90
